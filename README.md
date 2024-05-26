@@ -2,6 +2,13 @@
 
 This is a test submission project for the Stan.tv coding challenge.
 
+## Workflow
+
+```sh
+npm run dev
+run npm run test
+```
+
 ## The Challenge
 
 The guidelines of [the challenge](https://github.com/StreamCo/stan-tv-coding-challenge/tree/master/reactjs) state: *application should be built using Babel along with webpack into a dist folder containing four files (app.js, styles.css, logo.svg and index.html)*.
@@ -34,11 +41,13 @@ The essential goal of a developer is to solve problems.  In this case I had to s
 
 ## Getting started with Vite
 
-This is a very straight forward route, and the current defacto *simple* way to start an app in React.
+This is a very straight forward route, and the current defacto *simple* way to start an app in React at a time when there are many options.
 
 - create project with Vite and configure build to create a minimal dist directory.
 - add styled-components and implement basic carousel-like layout
 - create a type for programs
+
+I am using Node.js vv18.19.1 for this.
 
 ### Interface vs. Type
 
@@ -103,7 +112,182 @@ export type Program = {
   };
 ```
 
-## React + TypeScript + Vite (old)
+The fetch should happen with an async Thunk using Axios is a Redux slice, which can happen soon.  Fist unit tests need to be setup, as this is a requirement.
+
+## Setting up Jest
+
+I will just [Jest](https://jestjs.io/docs/snapshot-testing) with the React [testing-library](https://testing-library.com/docs/react-testing-library/intro/) for unit tests.
+
+```sh
+npm i jest --save-dev @testing-library/react ts-jest @types/jest --save-dev
+```
+
+In the package.json, add "test": jest to the script
+
+```sh
+run npm run test
+```
+
+Works now so add a simple test file: App.test.tsx and the first test passes.
+
+There is still a bit more to go to test the App.tsx file.
+
+To avoid the "Jest encountered an unexpected token" error when the test actually tries to ```render(<App />) expect(true).toBeTruthy()``` there are some more libraries needed.
+
+```sh
+npm install ts-node @testing-library/jest-dom --save-dev
+npm install jest-environment-jsdom
+npm install identity-obj-proxy --save-dev
+```
+
+Then create a jest.config.ts file.
+
+npm install --save-dev @babel/preset-typescript
+
+The link in the error message says *If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript*.
+
+This details the babel.config.js file required.
+
+```js
+module.exports = {
+    presets: [
+      ['@babel/preset-env', { targets: { node: 'current' } }],
+      '@babel/preset-typescript',
+    ],
+  };
+```
+
+when you create a Vite project for React using TypeScript, you're using the ECMAScript module system (ES modules), so that actually has to be a .ts file.
+
+That webpage also says *there are some caveats to using TypeScript with Babel. Because TypeScript support in Babel is purely transpilation, Jest will not type-check your tests as they are run.*
+
+However, this does not help to resolve the "Jest encountered an unexpected token" error.
+
+I think I need to read more of this error:
+
+```sh
+ FAIL  src/App.test.tsx
+  ● Test suite failed to run
+
+    Jest encountered an unexpected token
+
+    Jest failed to parse a file. This happens e.g. when your code or its dependencies use non-standard JavaScript syntax, or when Jest is not configured to support such syntax.
+
+    Out of the box Jest supports Babel, which will be used to transform your files into valid JS based on your Babel configuration.
+
+    By default "node_modules" folder is ignored by transformers.
+
+    Here's what you can do:
+     • If you are trying to use ECMAScript Modules, see https://jestjs.io/docs/ecmascript-modules for how to enable it.
+     • If you are trying to use TypeScript, see https://jestjs.io/docs/getting-started#using-typescript
+     • To have some of your "node_modules" files transformed, you can specify a custom "transformIgnorePatterns" in your config.
+     • If you need a custom transformation specify a "transform" option in your config.
+     • If you simply want to mock your non-JS modules (e.g. binary assets) you can stub them out with the "moduleNameMapper" config option.
+
+    You'll find more details and examples of these config options in the docs:
+    https://jestjs.io/docs/configuration
+    For information about custom transformations, see:
+    https://jestjs.io/docs/code-transformation
+
+    Details:
+
+    SyntaxError: C:\Users\timof\repos\temp\vite-project\src\App.test.tsx: Support for the experimental syntax 'jsx' isn't currently enabled (10:10):
+
+       8 |
+       9 | test("Renders the main page", () => {
+    > 10 |   render(<App />);
+         |          ^
+      11 |   expect(true).toBeTruthy();
+      12 | });
+      13 |
+
+    Add @babel/preset-react (https://github.com/babel/babel/tree/main/packages/babel-preset-react) to the 'presets' section of your Babel config to enable transformation.
+    If you want to leave it as-is, add @babel/plugin-syntax-jsx (https://github.com/babel/babel/tree/main/packages/babel-plugin-syntax-jsx) to the 'plugins' section to enable parsing.
+
+    If you already added the plugin for this syntax to your config, it's possible that your config isn't being loaded.
+    You can re-run Babel with the BABEL_SHOW_CONFIG_FOR environment variable to show the loaded configuration:
+        npx cross-env BABEL_SHOW_CONFIG_FOR=C:\Users\timof\repos\temp\vite-project\src\App.test.tsx <your build command>
+    See https://babeljs.io/docs/configuration#print-effective-configs for more info.
+
+      at toParseError (node_modules/@babel/parser/src/parse-error.ts:74:19)
+      at Parser.raise (node_modules/@babel/parser/src/tokenizer/index.ts:1497:19)
+      ...
+
+Test Suites: 1 failed, 1 total
+```
+
+I added "babel/preset-react" to the presets section of the babel.config.ts file.
+
+I added "@babel/plugin-syntax-jsx" to a new plugins section in hte jest.config.ts file.
+
+I tried multiple different transform patterns in the jest.config.ts to process `*.tsx` files with `ts-jest`:
+
+- "^.+\\.tsx?$": "ts-jest",
+- "^.+\\.ts?$": "ts-jest",
+- "^.+\\.(js|jsx)$": "babel-jest",
+- "\\.js$": "<rootDir>/node_modules/babel-jest",
+- '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
+- "^.+\\.(ts|tsx|js|jsx)$": "ts-jest"
+
+I tried adding an ignore pattern to the same file:
+
+```sh
+  transformIgnorePatterns: [
+    "node_modules/(?!@ngrx|(?!deck.gl)|ng-dynamic)"
+  ],
+```
+
+I created a .babelrc file
+
+Then when reading more about this issue on StackOverflow I read this: *I strongly recommend using vitest to set up the configuration. It's a breeze compared to having to jump all the hurdles to set up the testing environment from scratch.  You can find a very simple guide here https://codingpr.com/test-your-react-app-with-vitest-and-react-testing-library/.  You get access to the same methods as jest and have jsdom support, but all in a matter of minutes to get it working, already pre-packed for vite.*
+
+I had read a bit about vitest early on, but didn't want to have to jump to something I hand't used before without good reason.  This error wall is a good reason, especially as described there.
+
+So I will roll back all the work done so far and start from scratch there.
+
+## Unit Test your React TypeScript App With Vitest
+
+```sh
+npm i -D vitest
+npm i @testing-library/react
+```
+
+The package.json already has ```"test": "vitest",``` setup, so after creating a simple .ts sum function and test, that test will pass without any config.  Gotta like that.
+
+It is automatically configure to watch for file updates also.
+
+Next, it trying to test the actual rendered ```<App />``` and avoid a *ReferenceError: document is not defined* error, we need the JSDom lib.
+
+```sh
+npm i jsdom --save-dev
+```
+
+However, adding a test section to the vite.config.ts as is shown causes a TS editor error:
+
+```err
+No overload matches this call.
+  The last overload gave the following error.
+    Object literal may only specify known properties, and 'test' does not exist in type 'UserConfigExport'.ts(2769)
+index.d.ts(3154, 18): The last overload is declared here.
+```
+
+I had to change the import to ```import { defineConfig } from 'vitest/config';``` and then that error is gone.
+
+The first meaningful test:
+
+```js
+describe("Renders main page correctly", async () => {
+  it("Should render the page correctly", async () => {
+    render(<App />);
+    const h2Elements = screen.getAllByText("Dr. Death");
+    expect(h2Elements.length).toBeGreaterThan(0);
+  });
+});
+```
+
+Time for a commit.
+
+## React + TypeScript + Vite (old README)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 

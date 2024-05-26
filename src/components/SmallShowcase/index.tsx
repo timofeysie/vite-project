@@ -9,7 +9,8 @@ export interface SmallShowcaseProps {
 export default function SmallShowcase({ programs }: SmallShowcaseProps) {
   return (
     <Wrapper>
-      {Object.values(programs)
+      {programs && 
+      Object.values(programs)
         .slice(0, 6)
         .map((project, index) => (
           <div key={project.title} id={`/showcase?item=${project.id}`}>

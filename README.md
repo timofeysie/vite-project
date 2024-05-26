@@ -287,6 +287,65 @@ describe("Renders main page correctly", async () => {
 
 Time for a commit.
 
+## Redux Toolkit
+
+I haven't used RTK 2.0 yet, so this seems like a good opportunity to at least try it out.  I have used RTK 1.0 on the job now for a few years, so I expect I can handle this.
+
+There are the [Usage With TypeScript](https://redux-toolkit.js.org/usage/usage-with-typescript) and the [Redux Toolkit TypeScript Quick Start](https://redux-toolkit.js.org/tutorials/typescript) guides to start.
+
+```sh
+npm i @reduxjs/toolkit react-redux
+npm i @types/react-redux
+```
+
+I create an appSlice.ts file, and a store directory for the store.ts and reducer.ts files set up to hold the programs array for now.
+
+We should be able to move the data load function to an async thunk now and have our app test pass again.
+
+Although not strictly called for I will need Axios for this:
+
+```sh
+npm i axios
+```
+
+I had to move the sampleData.json to the public directory for it to be available, then I was faced with a failing test:
+
+```err
+FAIL  src/App.test.tsx > Renders main page correctly > Should render the page correctly
+Error: could not find react-redux context value; please ensure the component is wrapped in a <Provider>
+```
+
+Right, and use the Provider also in the unit tests.  I wrote a [blog post](https://timothycurchod.com/writings/redux-essentials-app-in-typescript) about this a few years ago.
+
+We will need a React-Redux <Provider> component wrapped around them, with a real Redux store set up and provided.
+
+The [docs](https://redux.js.org/usage/writing-tests) also point out: *test code should create a separate Redux store instance for every test, rather than reusing the same store instance and resetting its state. That ensures no values accidentally leak between tests.*
+
+We will also need the deal with the Thunk middleware.
+
+```sh
+npm i redux-mock-store
+npm i @types/redux-thunk
+npm i --save-dev @types/redux-mock-store
+```
+
+However, I was not able to solve the plethora of errors that arose from trying to mock the state.  As it is, the state does not change and we can only test what is there when the App.tsx component is rendered:
+
+```js
+describe("App", () => {
+  it("full app rendering/navigating", async () => {
+    render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
+    expect(screen.getByText(/Stan.com.au/i)).toBeTruthy();
+  });
+});
+```
+
+I have had issues with this before.  In my current project, I only use unit tests to describe Typescript functions.  If I want to really tests the rendered app, its much better to use Cypress to test what the user sees and interacts with.
+
 ## React + TypeScript + Vite (old README)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

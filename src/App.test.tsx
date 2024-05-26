@@ -1,11 +1,16 @@
 import { describe, it, expect } from "vitest";
+import { Provider } from "react-redux";
 import { render, screen } from "@testing-library/react";
+import { store } from "./store/store";
 import App from "./App";
 
-describe("Renders main page correctly", async () => {
-  it("Should render the page correctly", async () => {
-    render(<App />);
-    const h2Elements = screen.getAllByText("Dr. Death");
-    expect(h2Elements.length).toBeGreaterThan(0);
+describe("App", () => {
+  it("full app rendering/navigating", async () => {
+    render(
+      <Provider store={store}>
+        <App />
+      </Provider>
+    );
+    expect(screen.getByText(/Stan.com.au/i)).toBeTruthy();
   });
 });

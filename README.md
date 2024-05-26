@@ -346,6 +346,55 @@ describe("App", () => {
 
 I have had issues with this before.  In my current project, I only use unit tests to describe Typescript functions.  If I want to really tests the rendered app, its much better to use Cypress to test what the user sees and interacts with.
 
+## The Requirements
+
+So far, I have a most of the items checked off the guidelines:
+
+- TypeScript
+- Babel
+- Webpack (using Rollup)
+- Jest
+- React
+- Redux (optional)
+- Styled Components (optional)
+- React Router (optional) -> coming soon
+
+TODO
+
+- ensure responsive support for 720p and 1080p screen sizes.
+- text using "Open Sans" font.
+
+## Routing
+
+This can be done at this point and get the two pages working along with the basic components.
+
+```npm i react-router-dom``` results in "react-router-dom": "^6.23.1" installed.
+
+Initially I used the carousel example from the [Styled Components website](https://styled-components.com/) as inspiration for a stylish coursel with awor of cars that are smaller on the edges than the main image that is currently selected in the list.  The code is available on their [Github](https://github.com/styled-components/styled-components-website).
+
+However, the CSS for the SmallShowcase is rather obtuse, so now I will re-interpret that look but with a more simple approach.
+
+### "Home" Page
+
+1. This page should consist of the layout along with a simple and reusable carousel.
+2. The provided sample data (data.json) should be retrieved using the fetch API.
+3. Each image in the carousel should link to a "Program" page.
+4. Navigation between images in the carousel should be handled using the left, right and enter keyboard keys.
+5. No more than six carousel images should be in the DOM at any time.
+6. When the UI is in a loading state render a skeleton. (home-loading.jpg).
+7. When an error occurs an error message message should be rendered. (error.jpg)
+8. This functionality should be unit tested.
+
+### "Program" Page
+
+1. This page should consist of the layout along with a program overview.
+2. The program to display should be determined by the ID.
+3. You should only fetch the provided sample data if the "Home" page has not been visited first.
+4. Pressing the backspace keyboard key should take you back to the "Home" page.
+5. When the UI is in a loading state render a skeleton. (program-loading.jpg).
+6. When an error occurs an error message message should be rendered. (error.jpg)
+7. This functionality should be unit tested.
+
 ## React + TypeScript + Vite (old README)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

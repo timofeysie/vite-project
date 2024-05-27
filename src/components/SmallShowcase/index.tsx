@@ -1,144 +1,97 @@
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
-import { headerFont } from "../../utils/fonts";
 import { Program } from "../../types/Program";
+import { useNavigate } from "react-router-dom";
 
-export interface SmallShowcaseProps {
-  programs: Program[];
-}
-
-export default function SmallShowcase({ programs }: SmallShowcaseProps) {
-  return (
-    <Wrapper>
-      {programs && 
-      Object.values(programs)
-        .slice(0, 6)
-        .map((project, index) => (
-          <div key={project.title} id={`/showcase?item=${project.id}`}>
-            <Website as="a" $position={index}>
-              <RatioBox>
-                <Screenshot
-                  style={{ backgroundImage: `url(${project.image})` }}
-                />
-                <Label>{project.title}</Label>
-              </RatioBox>
-            </Website>
-          </div>
-        ))}
-    </Wrapper>
-  );
-}
-
-const scaleFactor = [1.8, 1.4, 1];
-
-const Wrapper = styled.div`
-  width: 100%;
+const CarouselContainer = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  overflow: hidden;
   justify-content: center;
+  height: 70vh;
+`;
+
+const CarouselItemContainer = styled.div<{ isCenter: boolean }>`
+  padding: 10px;
+  display: flex;
   align-items: center;
-  padding: 24px;
-  margin-top: -96px;
-
-  @media (min-width: 640px) {
-    padding: 32px;
-  }
-
-  @media (min-width: 800px) {
-    width: 120%;
-    padding: 0;
-    max-width: 1280px;
-    margin-top: 0px;
-    transform: translateY(50%);
-  }
-`;
-
-const Label = styled.label`
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  max-width: 100%;
-  transform: translate(-50%, 50%);
-  background-color: white;
-  color: #333;
-  font-family: ${headerFont};
-  padding: 2px 12px;
-  white-space: nowrap;
-  border-radius: 6px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 5px 12px rgba(0, 0, 0, 0.1);
-  opacity: 0;
-  transition: all 0.2s ease-out;
-
-  @media (min-width: 800px) {
-    font-size: 0.65rem;
-  }
-`;
-
-const Website = styled.div<{ $position: number }>`
-  display: block;
-  position: relative;
-  width: 100%;
+  justify-content: center;
   transition: all 0.2s ease-in-out;
+  flex-shrink: 0;
+  max-width: ${(props) => (props.isCenter ? "100%" : "80%")};
+  opacity: ${(props) => (props.isCenter ? "1" : "0.7")};
+  border: ${(props) => (props.isCenter ? "2px solid blue" : "none")};
 
   &:hover {
     transform: scale(1.1);
     cursor: pointer;
-
-    ${Label} {
-      opacity: 1;
-    }
+    opacity: 1;
   }
 
-  @media (min-width: 800px) {
-    padding: 12px;
-    z-index: ${(props: { $position: number }) =>
-      2 - Math.abs(props.$position - 2)};
-    display: ${(props: { $position: number }) =>
-      props.$position > 4 ? "none" : "block"};
-    transform: scale(
-      ${(props: { $position: number }) =>
-        scaleFactor[Math.abs(props.$position - 2)]}
-    );
+  @media (max-width: 1366px) {
+    max-width: ${(props) => (props.isCenter ? "100%" : "70%")};
+  }
 
-    &:hover {
-      transform: scale(
-        ${(props: { $position: number }) =>
-          scaleFactor[Math.abs(props.$position - 2)] + 0.2}
-      );
+  @media (max-width: 1024px) {
+    max-width: ${(props) => (props.isCenter ? "100%" : "60%")};
+  }
 
-      &:nth-of-type(-n + 2) {
-        ${Label} {
-          left: 0;
-          transform: translate(0, 50%);
-        }
-      }
-
-      &:nth-of-type(4),
-      &:nth-of-type(5) {
-        ${Label} {
-          right: 0;
-          transform: translate(0, 50%);
-        }
-      }
-    }
+  @media (max-width: 720px) {
+    max-width: ${(props) => (props.isCenter ? "100%" : "50%")};
   }
 `;
 
-const RatioBox = styled.div`
-  padding-top: 56.25%;
-  position: relative;
+const CarouselImage = styled.img`
   width: 100%;
-`;
-
-const Screenshot = styled.div`
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
+  height: 70%;
+  object-fit: cover;
   border-radius: 4px;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08), 0 5px 12px rgba(0, 0, 0, 0.1);
-
-  @media (min-width: 800px) {
-    width: 100%;
-    max-width: 300px;
-    padding-bottom: 150%; /* Set the aspect ratio as a percentage */
-  }
 `;
+
+interface CarouselProps {
+  programs: Program[];
+}
+
+const Carousel: React.FC<CarouselProps> = ({ programs }) => {
+  console.log('programs', programs)
+  const navigate = useNavigate();
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowRight") {
+        setSelectedIndex((prevIndex) => (prevIndex + 1) % programs.length);
+      } else if (event.key === "ArrowLeft") {
+        setSelectedIndex(
+          (prevIndex) => (prevIndex - 1 + programs.length) % programs.length
+        );
+      } else if (event.key === "Enter") {
+        // Handle enter key press (e.g., navigate to program page)
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [programs]);
+
+  const visibleItems = programs?.slice(selectedIndex - 2, selectedIndex + 3);
+
+  return (
+    <CarouselContainer>
+      {visibleItems &&
+        visibleItems.map((program, index) => (
+          <CarouselItemContainer
+            key={program.id}
+            isCenter={index === 2}
+            onClick={() => navigate(`/program/${program.id}`)}
+          >
+            <CarouselImage src={program.image} alt={program.title} />
+          </CarouselItemContainer>
+        ))}
+    </CarouselContainer>
+  );
+};
+
+export default Carousel;

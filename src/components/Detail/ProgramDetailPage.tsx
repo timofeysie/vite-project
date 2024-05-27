@@ -45,25 +45,28 @@ const ProgramDetailPage = () => {
     selectProgramById(state, parseInt(id ?? "", 10))
   ) as Program;
 
-  console.log(";program", program);
   return (
     <div>
       {
         <Container>
-          <Image src={program.image} alt={program.title} />
-          <ProgramDetails>
-            <Title>{program.title}</Title>
+          {program && (
+            <>
+              <Image src={program.image} alt={program.title} />
+              <ProgramDetails>
+                <Title>{program.title}</Title>
 
-            <PropertiesContainer>
-              <Property>{program.rating} |&nbsp;</Property>
-              <Property>{program.year} |&nbsp;</Property>
-              <Property>{program.type} |&nbsp;</Property>
-              <Property>{program.genre} |&nbsp;</Property>
-              <Property>{program.language}</Property>
-            </PropertiesContainer>
+                <PropertiesContainer>
+                  <Property>{program.rating} |&nbsp;</Property>
+                  <Property>{program.year} |&nbsp;</Property>
+                  <Property>{program.type} |&nbsp;</Property>
+                  <Property>{program.genre} |&nbsp;</Property>
+                  <Property>{program.language}</Property>
+                </PropertiesContainer>
 
-            <Property>{program.description}</Property>
-          </ProgramDetails>
+                <Property>{program.description}</Property>
+              </ProgramDetails>
+            </>
+          )}
         </Container>
       }
       <Button onClick={() => navigate("/")}>Back</Button>

@@ -374,7 +374,142 @@ Initially I used the carousel example from the [Styled Components website](https
 
 However, the CSS for the SmallShowcase is rather obtuse, so now I will re-interpret that look but with a more simple approach.
 
-### "Home" Page
+## The theme
+
+I created a theme provider to allow using the theme color and font throughout that app.
+
+However, theses can also be set as global styles, instead of using the index.css.  I did this by creating a GlobalStyle styled-component:
+
+```js
+export const GlobalStyle = createGlobalStyle`
+  body {
+    background-color: ${({ theme }) => theme.backgroundColor};
+    font-family: ${({ theme }) => theme.font};
+  }
+`;
+```
+
+This is included in the main.tsx file and used like this:
+
+```js
+  <React.StrictMode>
+    <Provider store={store}>
+      <Theme>
+      <GlobalStyle />
+        <App />
+      </Theme>
+    </Provider>
+  </React.StrictMode>
+```
+
+## The isCenter warning
+
+To add the border around the center selected current slide in the carousel, I us an isCenter variable.  However, it is causing this:
+
+```err
+Warning: React does not recognize the `isCenter` prop on a DOM element. If you intentionally want it to appear in the DOM as a custom attribute, spell it as lowercase `iscenter` instead. If you accidentally passed it from a parent component, remove it from the DOM element.
+    at img
+    at O2 (http://localhost:5173/node_modules/.vite/deps/styled-components.js?v=63feadf9:1264:6)
+```
+
+Trying out the 'iscenter' approach causes another even longer warning:
+
+```err
+No overload matches this call.
+  Overload 1 of 2, '(props: PolymorphicComponentProps<"web", Substitute<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, { ...; }>, void, void, {}, {}>): Element', gave the following error.
+    Type 'string' is not assignable to type 'boolean'.
+  Overload 2 of 2, '(props: Substitute<DetailedHTMLProps<ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>, { iscenter: boolean; }>): ReactNode', gave the following error.
+    Type 'string' is not assignable to type 'boolean'.ts(2769)
+```
+
+I decided to ask ChatGPT about this, and it suggested using the custom attribute selector [iscenter="true"] directly on the styled component.
+
+That solution looks like this (the original use is commented out here):
+
+```js
+const CarouselImage = styled.img<{ isCenter: boolean }>`
+  width: 100%;
+  height: 70%;
+  object-fit: cover;
+  border-radius: 4px;
+  padding: 4px;
+  // border: ${(props) => (props.isCenter ? "2px solid blue" : "none")};
+  &[iscenter="true"] {
+    border: 2px solid blue;
+  }
+`;
+```
+
+This did nothing, and the next suggestion was to use the css helper function from styled-components to conditionally apply the border style.
+
+```js
+import { css } from "styled-components";
+
+const CarouselImage = styled.img<{ isCenter: boolean }>`
+  width: 100%;
+  height: 70%;
+  object-fit: cover;
+  border-radius: 4px;
+  padding: 4px;
+  ${(props) =>
+    props.isCenter &&
+    css`
+      border: 2px solid blue;
+    `}
+`;
+```
+
+This also did not work as the warning did not go away.
+
+The next suggestion was to manually remove the isCenter prop from the CarouselImage component like this:
+
+```js
+const CarouselImage = styled.img<{ isCenter: boolean }>`
+  width: 100%;
+  height: 70%;
+  object-fit: cover;
+  border-radius: 4px;
+  padding: 4px;
+  ${(props) =>
+    props.isCenter &&
+    css`
+      border: 2px solid blue;
+    `}
+`;
+
+const Carousel: React.FC<CarouselProps> = ({ programs }) => {
+  // ...
+
+  return (
+    <CarouselContainer>
+      {visibleItems.map((program, index) => {
+        const isCenter = index === 2;
+        const carouselImageProps = omit({ isCenter }, ["isCenter"]);
+
+        return (
+          <CarouselItemContainer
+            key={program.id}
+            isCenter={isCenter}
+            onClick={() => navigate(`/program/${program.id}`)}
+          >
+            <CarouselImage src={program.image} alt={program.title} {...carouselImageProps} />
+          </CarouselItemContainer>
+        );
+      })}
+    </CarouselContainer>
+  );
+};
+```
+
+Notice it includes lodash.  I'm not against lodash, but I don't think you should install a new lib just for a warning.
+
+This also shows how ChatGPT can lead you down the garden path.  I will accept the warning for now and come back to that when I have time later.
+
+## The Specification
+
+The challenge calls for two pages.
+
+### Home Page
 
 1. This page should consist of the layout along with a simple and reusable carousel.
 2. The provided sample data (data.json) should be retrieved using the fetch API.
@@ -385,7 +520,7 @@ However, the CSS for the SmallShowcase is rather obtuse, so now I will re-interp
 7. When an error occurs an error message message should be rendered. (error.jpg)
 8. This functionality should be unit tested.
 
-### "Program" Page
+### Program Page
 
 1. This page should consist of the layout along with a program overview.
 2. The program to display should be determined by the ID.

@@ -10,15 +10,15 @@ const CarouselContainer = styled.div`
   height: 70vh;
 `;
 
-const CarouselItemContainer = styled.div<{ iscenter: boolean }>`
+const CarouselItemContainer = styled.div<{ isCenter: boolean }>`
   padding: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease-in-out;
   flex-shrink: 0;
-  max-width: ${(props) => (props.iscenter ? "100%" : "80%")};
-  opacity: ${(props) => (props.iscenter ? "1" : "0.7")};
+  max-width: ${(props) => (props.isCenter ? "100%" : "80%")};
+  opacity: ${(props) => (props.isCenter ? "1" : "0.7")};
 
   // &:hover {
   //   transform: scale(1.1);
@@ -27,25 +27,25 @@ const CarouselItemContainer = styled.div<{ iscenter: boolean }>`
   // }
 
   @media (max-width: 1366px) {
-    max-width: ${(props) => (props.iscenter ? "100%" : "70%")};
+    max-width: ${(props) => (props.isCenter ? "100%" : "70%")};
   }
 
   @media (max-width: 1024px) {
-    max-width: ${(props) => (props.iscenter ? "100%" : "60%")};
+    max-width: ${(props) => (props.isCenter ? "100%" : "60%")};
   }
 
   @media (max-width: 720px) {
-    max-width: ${(props) => (props.iscenter ? "100%" : "50%")};
+    max-width: ${(props) => (props.isCenter ? "100%" : "50%")};
   }
 `;
 
-const CarouselImage = styled.img<{ iscenter: boolean }>`
+const CarouselImage = styled.img<{ isCenter: boolean }>`
   width: 100%;
   height: 70%;
   object-fit: cover;
   border-radius: 4px;
   padding: 4px;
-  border: ${(props) => (props.iscenter ? "2px solid blue" : "none")};
+  border: ${(props) => (props.isCenter ? "2px solid blue" : "none")};
 `;
 
 interface CarouselProps {
@@ -88,10 +88,10 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
       {visibleItems.map((program, index) => (
         <CarouselItemContainer
           key={program.id}
-          iscenter={index === 2}
+          isCenter={index === 2}
           onClick={() => navigate(`/program/${program.id}`)}
         >
-          <CarouselImage src={program.image} alt={program.title} iscenter={index === 2} />
+          <CarouselImage src={program.image} alt={program.title} isCenter={index === 2} />
         </CarouselItemContainer>
       ))}
     </CarouselContainer>

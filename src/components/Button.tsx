@@ -2,7 +2,8 @@ import styled from "styled-components";
 import React, { ButtonHTMLAttributes } from "react";
 
 const StyledButton = styled.button`
-  background-color: blue;
+  font-family: ${({ theme }) => theme.font};
+  background-color: ${({ theme }) => theme.stanBlue};
   color: white;
   font-size: 16px;
   padding: 8px 16px;

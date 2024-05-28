@@ -21,17 +21,7 @@ const CarouselItemContainer = styled.div<{ center: string }>`
   max-width: ${(props) => (props.center ? "100%" : "80%")};
   opacity: ${(props) => (props.center ? "1" : "0.7")};
 
-  // &:hover {
-  //   transform: scale(1.1);
-  //   cursor: pointer;
-  //   opacity: 1;
-  // }
-
-  @media (max-width: 1366px) {
-    max-width: ${(props) => (props.center ? "100%" : "70%")};
-  }
-
-  @media (max-width: 1024px) {
+  @media (max-width: 1080px) {
     max-width: ${(props) => (props.center ? "100%" : "60%")};
   }
 
@@ -90,7 +80,7 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
     if (relativeIndex >= -2 && relativeIndex <= 5) {
       if (arrowButtonPressed === "ArrowLeft") {
         // TODO: This is the problem with the left arrow key
-        // We need to add the last item in the programs list to the 
+        // We need to add the last item in the programs list to the
         // beginning on the visible items.
         accumulator.push(program);
       } else {

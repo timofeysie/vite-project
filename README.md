@@ -13,6 +13,7 @@ run npm run test
 
 - [Table of Contents](#table-of-contents)
   * [The Challenge](#the-challenge)
+  * [Planning](#planning)
   * [Getting started with Vite](#getting-started-with-vite)
   * [Interface vs. Type](#interface-vs.-type)
   * [Setting up Jest](#setting-up-jest)
@@ -27,8 +28,50 @@ run npm run test
   * [Unit tests](#unit-tests)
   * [React + TypeScript + Vite (old README)](#react+typeScript+vite-(old-README))
 
-
 ## The Challenge
+
+The [Stan TV Coding Challenge](https://github.com/StreamCo/stan-tv-coding-challenge) consists of a frontend and a backend test.
+
+This repo covers the frontend test.  As a full-stack developer, I would also like to try the backend test and will update the notes here when I get the time to do that.
+
+In the *Other Notes* section there are a few follow up questions which I will answer here first.
+
+### How did you decide on the technical and architectural choices used as part of your solution?
+
+If I had a chance to start again, I might not have chosen Vite as the starting framework.  The limitations of the build requirements and tech stack seemed to indicate a CRA approach, but at the same time dictate that the project must use modern methods.  I'm still not sure what the best React stack would be suitable for this.  Given the requirements for Webpack and a the small build, it seems that the frameworks I am familiar with would require customization to achieve this, and I suppose this is part of the challenge.
+
+Regarding the core of the project, a reusable carousel, I had a feeling that there should be a linear algebra solution for this kind of problem.  We have a set of objects of which a subset is displayed.  The index of each objects need to be handled specifically to allow navigation, as the backwards route.
+
+A circular, buffered or virtual carousel model can be implemented in various ways.  However, the sliding window Carousel seems like the simplest.
+
+### Are there any improvements you could make to your submission?
+
+I would add transitions to the carousel, as well as an automatic mode and exposed more functionality to increase the reusability of the component.
+
+### What would you do differently if you were allocated more time?
+
+If I had more time I would finish all the requirements of the test.  I still need to ensure responsive support for 720p and 1080p screen sizes.  Actually, my initial layout was responsive but I broke that along the way when implementing the them.
+
+The Redux store implements a loading state, this needs to be implemented in the UI with a skeleton loading screen.
+
+I used axios instead of fetch out of habit, but there is no reason not to change back to fetch as the use case is the same.
+
+However, I have other work to do at the moment so can't keep going on this.  I will update the solution eventually to my satisfaction, but for this this project represents about eight hours of my time.
+
+### We are also interested in looking at any other code or projects that you're proud
+
+On project I am particularly proud of is the [React Redux TypeScript Example](https://github.com/timofeysie/redux-typescript-example) project.
+
+A few years ago I found not much help when using the Redux Toolkit with Typescript, so I took it upon myself to convert the large example app from their official learning trail to Typescript.  I wrote a few blogs about this, and got some great feedback on it.  Including from the Redux lead developer Mark Erikson took notice and used it as a reference when creating the current docs which now focus on Typescript.
+
+### Feedback on the coding challenge
+
+One way the test could be improved would be to at least recommend the framework to use which would satisfy the stack requirements out of the box so that the person taking the test wouldn't have to take the time to survey the seven or so frameworks now discussed on official [Start a New React Project](https://react.dev/learn/start-a-new-react-project)
+Page.
+
+## Planning
+
+This mainly consisted of considering how best to start a project that would satisfy all the requirements.  I had an vague idea of how to implement the carousel logic and wish I had spent more time on that in the end.
 
 The guidelines of [the challenge](https://github.com/StreamCo/stan-tv-coding-challenge/tree/master/reactjs) state: *application should be built using Babel along with webpack into a dist folder containing four files (app.js, styles.css, logo.svg and index.html)*.
 
@@ -550,7 +593,6 @@ TODO
 
 - ensure responsive support for 720p and 1080p screen sizes.
 - skeleton loading screen
-- unit test carousel
 - change axios back to fetch
 
 ## The carousel

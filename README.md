@@ -500,6 +500,8 @@ Notice it includes lodash.  I'm not against lodash, but I don't think you should
 
 This also shows how ChatGPT can lead you down the garden path.  I will accept the warning for now and come back to that when I have time later.
 
+An update on this issue is that it was also not working for unit tests to determine the selected program, so I ended up changing the name to "center" and the warnings went away and the tests passed.
+
 ## The Specification
 
 The challenge calls for two pages.
@@ -528,9 +530,9 @@ The challenge calls for two pages.
 TODO
 
 - ensure responsive support for 720p and 1080p screen sizes.
-- skelaton loading screen
+- skeleton loading screen
 - unit test carousel
-
+- change axios back to fetch
 
 ## The carousel
 
@@ -549,6 +551,8 @@ Error: Uncaught [Error: useNavigate() may be used only in the context of a <Rout
 ```
 
 I used an example [from the testing-library](https://testing-library.com/docs/example-react-router/) to solve this.
+
+Now that I have a few tests passing, I can confirm that issue #3 noted above is a thing.  I can practice a little TDD to fix that next.
 
 ## React + TypeScript + Vite (old README)
 

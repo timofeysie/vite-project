@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import "./App.css";
 import { Program } from "./types/Program";
 import { getSampleData } from "./appSlice";
 import { useDispatch } from "react-redux";

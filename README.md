@@ -9,6 +9,25 @@ npm run dev
 run npm run test
 ```
 
+## Table of Contents
+
+- [Table of Contents](#table-of-contents)
+  * [The Challenge](#the-challenge)
+  * [Getting started with Vite](#getting-started-with-vite)
+  * [Interface vs. Type](#interface-vs.-type)
+  * [Setting up Jest](#setting-up-jest)
+  * [Unit testing a React TypeScript App With Vitest](#unit-testing-a-react-typeScript-app-with-vitest)
+  * [Redux Toolkit](#redux-roolkit)
+  * [Routing](#routing)
+  * [The Requirements](#the-requirements)
+  * [The theme](#the-theme)
+  * [The isCenter warning](#the-iscenter-warning)
+  * [The Specification](#the-specification)
+  * [The carousel](#the-carousel)
+  * [Unit tests](#unit-tests)
+  * [React + TypeScript + Vite (old README)](#react+typeScript+vite-(old-README))
+
+
 ## The Challenge
 
 The guidelines of [the challenge](https://github.com/StreamCo/stan-tv-coding-challenge/tree/master/reactjs) state: *application should be built using Babel along with webpack into a dist folder containing four files (app.js, styles.css, logo.svg and index.html)*.
@@ -245,7 +264,7 @@ I had read a bit about vitest early on, but didn't want to have to jump to somet
 
 So I will roll back all the work done so far and start from scratch there.
 
-## Unit Test your React TypeScript App With Vitest
+## Unit testing a React TypeScript App With Vitest
 
 ```sh
 npm i -D vitest
@@ -553,6 +572,10 @@ Error: Uncaught [Error: useNavigate() may be used only in the context of a <Rout
 I used an example [from the testing-library](https://testing-library.com/docs/example-react-router/) to solve this.
 
 Now that I have a few tests passing, I can confirm that issue #3 noted above is a thing.  I can practice a little TDD to fix that next.
+
+I was able to test the right arrow behavior, but ran out of time when trying to refactor the code so the left arrow key works as expected.
+
+When the left arrow key I need to add the last item in the programs list to the beginning on the visible items, but to handle this correctly there needs to be some refactoring.
 
 ## React + TypeScript + Vite (old README)
 

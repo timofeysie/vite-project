@@ -56,19 +56,22 @@ export interface CarouselProps {
 const Carousel: React.FC<CarouselProps> = ({ programs }) => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [arrowButtonPressed, setArrowButtonPressed] = useState("");
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight") {
-        console.log('right');
         setSelectedIndex((prevIndex) => (prevIndex + 1) % programs.length);
+        setArrowButtonPressed("ArrowRight");
       } else if (event.key === "ArrowLeft") {
-        console.log('left');
-        setSelectedIndex(
-          (prevIndex) => (prevIndex - 1 + programs.length) % programs.length
-        );
+        setSelectedIndex((prevIndex) => {
+          const newIndex = (prevIndex - 1 + programs.length) % programs.length;
+          setArrowButtonPressed("ArrowLeft");
+          return newIndex;
+        });
       } else if (event.key === "Enter") {
-        navigate(`/program/${programs[selectedIndex].id}`);
+        setArrowButtonPressed("");
+        navigate(`/program/${programs[selectedIndex + 2].id}`);
       }
     };
 
@@ -77,16 +80,25 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [programs]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [programs, selectedIndex]);
 
-  const visibleItems = programs?.reduce((acc, program, index) => {
-    if (index >= selectedIndex - 2 && index <= selectedIndex + 4) {
-      acc.push(program);
+  const visibleItems = programs?.reduce((accumulator, program, index) => {
+    const relativeIndex =
+      (index - selectedIndex + programs.length) % programs.length;
+
+    if (relativeIndex >= -2 && relativeIndex <= 5) {
+      if (arrowButtonPressed === "ArrowLeft") {
+        // TODO: This is the problem with the left arrow key
+        // We need to add the last item in the programs list to the 
+        // beginning on the visible items.
+        accumulator.push(program);
+      } else {
+        accumulator.push(program);
+      }
     }
-    return acc;
+    return accumulator;
   }, [] as Program[]);
-
-  console.log("{visibleItems.length}", visibleItems.length);
 
   return (
     <CarouselContainer data-testid="carousel-container">

@@ -11,6 +11,6 @@ describe("App", () => {
         <App />
       </Provider>
     );
-    expect(screen.getByText(/Stan.com.au/i)).toBeTruthy();
+    expect(screen.getByText(/Home/i)).toBeTruthy();
   });
 });

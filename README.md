@@ -344,11 +344,21 @@ describe("App", () => {
 });
 ```
 
-I have had issues with this before.  In my current project, I only use unit tests to describe Typescript functions.  If I want to really tests the rendered app, its much better to use Cypress to test what the user sees and interacts with.
+I have had issues with this before.  In my current project, I only use unit tests to describe Typescript functions.  If I want to really tests the rendered app, its much better to use Cypress to test what the user sees and interacts with.  However, unit testing is required so this will have to be solved.
+
+## Routing
+
+This can be done at this point and get the two pages working along with the basic components.
+
+```npm i react-router-dom``` results in "react-router-dom": "^6.23.1" installed.
+
+Initially I used the carousel example from the [Styled Components website](https://styled-components.com/) as inspiration for a stylish carousel with a row of cards that are smaller on the edges than the main image that is currently selected in the list.  The code is available on their [Github](https://github.com/styled-components/styled-components-website).
+
+The CSS for the SmallShowcase is rather obtuse, so now I will re-interpret that look but with a more simple approach.
 
 ## The Requirements
 
-So far, I have a most of the items checked off the guidelines:
+I have these items checked off from the guidelines:
 
 - TypeScript
 - Babel
@@ -357,22 +367,7 @@ So far, I have a most of the items checked off the guidelines:
 - React
 - Redux (optional)
 - Styled Components (optional)
-- React Router (optional) -> coming soon
-
-TODO
-
-- ensure responsive support for 720p and 1080p screen sizes.
-- text using "Open Sans" font.
-
-## Routing
-
-This can be done at this point and get the two pages working along with the basic components.
-
-```npm i react-router-dom``` results in "react-router-dom": "^6.23.1" installed.
-
-Initially I used the carousel example from the [Styled Components website](https://styled-components.com/) as inspiration for a stylish coursel with awor of cars that are smaller on the edges than the main image that is currently selected in the list.  The code is available on their [Github](https://github.com/styled-components/styled-components-website).
-
-However, the CSS for the SmallShowcase is rather obtuse, so now I will re-interpret that look but with a more simple approach.
+- React Router (optional)
 
 ## The theme
 
@@ -530,6 +525,31 @@ The challenge calls for two pages.
 6. When an error occurs an error message message should be rendered. (error.jpg)
 7. This functionality should be unit tested.
 
+TODO
+
+- ensure responsive support for 720p and 1080p screen sizes.
+- skelaton loading screen
+- unit test carousel
+
+
+## The carousel
+
+There are a few issues with the basic list and keyboard actions I have at the moment.
+
+1. The selected item starts off at two and going to the right jumps to the end of the list.
+2. Pressing enter goes the the first detail.
+3. Pressing the right arrow key has to be done three times to start moving the selected program.
+
+## Unit tests
+
+When trying to write a test for the Carousel component with Vitest which is supposed to be Jest compatible, I kept running into this error:
+
+```err
+Error: Uncaught [Error: useNavigate() may be used only in the context of a <Router> component.]
+```
+
+I used an example [from the testing-library](https://testing-library.com/docs/example-react-router/) to solve this.
+
 ## React + TypeScript + Vite (old README)
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -539,7 +559,7 @@ Currently, two official plugins are available:
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+### Expanding the ESLint configuration
 
 If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
 

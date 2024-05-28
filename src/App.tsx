@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import Carousel from "./components/Carousel/Carousel";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ProgramDetailPage from "./components/Detail/ProgramDetailPage";
+import Nav from "./components/Nav";
 
 function App() {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ function App() {
 
   return (
     <BrowserRouter>
+    <Nav></Nav>
       <Routes>
         <Route path="/" element={<Carousel programs={programs} />} />
         <Route path="/program/:id" element={<ProgramDetailPage />} />

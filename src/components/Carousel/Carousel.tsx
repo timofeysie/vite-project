@@ -48,7 +48,7 @@ const CarouselImage = styled.img<{ isCenter: boolean }>`
   border: ${(props) => (props.isCenter ? "2px solid blue" : "none")};
 `;
 
-interface CarouselProps {
+export interface CarouselProps {
   programs: Program[];
 }
 
@@ -77,7 +77,7 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
   }, [programs]);
 
   const visibleItems = programs?.reduce((acc, program, index) => {
-    if (index >= selectedIndex - 2 && index <= selectedIndex + 2) {
+    if (index >= selectedIndex - 2 && index <= selectedIndex + 3) {
       acc.push(program);
     }
     return acc;
@@ -85,7 +85,7 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
 
   return (
     <CarouselContainer>
-      {visibleItems.map((program, index) => (
+      {visibleItems?.map((program, index) => (
         <CarouselItemContainer
           key={program.id}
           isCenter={index === 2}

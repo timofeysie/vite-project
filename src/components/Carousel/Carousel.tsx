@@ -47,6 +47,44 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [arrowButtonPressed, setArrowButtonPressed] = useState("");
+  const [visibleItems, setVisibleItems] = useState<Program[]>([]);
+
+  /**
+   * Take the current index and create a visible array of program objects to display
+   * @param currentIndex default 0
+   * @returns array of visible programs to show.
+   */
+  function createVisibleList(currentIndex: number): Program[] {
+    const result: Program[] = [];
+
+    // calculate the first two object pseudo indices
+    const pseudoIndex1 = (currentIndex - 2 + programs.length) % programs.length;
+    const pseudoIndex2 = (currentIndex - 1 + programs.length) % programs.length;
+
+    // add the pseudo objects to the result array
+    result.push(programs[pseudoIndex1]);
+    result.push(programs[pseudoIndex2]);
+
+    // add the main currently selected object
+    const mainObject = { ...programs[currentIndex], center: true };
+    result.push(mainObject);
+
+    // add the remaining objects to the result array
+    for (let i = 1; i <= 4; i++) {
+      const mainIndex = (currentIndex + i) % programs.length;
+      result.push(programs[mainIndex]);
+    }
+
+    return result;
+  }
+
+  useEffect(() => {
+    if (programs) {
+      const visibleList = createVisibleList(selectedIndex);
+      console.log("visibleItems", visibleList);
+      setVisibleItems(visibleList);
+    }
+  }, [programs]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -65,6 +103,8 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
       }
     };
 
+    console.log("arrowButtonPressed", arrowButtonPressed);
+
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -73,38 +113,31 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [programs, selectedIndex]);
 
-  const visibleItems = programs?.reduce((accumulator, program, index) => {
-    const relativeIndex =
-      (index - selectedIndex + programs.length) % programs.length;
-
-    if (relativeIndex >= -2 && relativeIndex <= 5) {
-      if (arrowButtonPressed === "ArrowLeft") {
-        // TODO: This is the problem with the left arrow key
-        // We need to add the last item in the programs list to the
-        // beginning on the visible items.
-        accumulator.push(program);
-      } else {
-        accumulator.push(program);
-      }
-    }
-    return accumulator;
-  }, [] as Program[]);
+  useEffect(() => {
+    const visibleList = createVisibleList(selectedIndex);
+    console.log("visibleItems", visibleList);
+    setVisibleItems(visibleList);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedIndex]);
 
   return (
     <CarouselContainer data-testid="carousel-container">
-      {visibleItems?.map((program, index) => (
-        <CarouselItemContainer
-          key={program.id}
-          center={index === 2 ? "true" : "false"}
-          onClick={() => navigate(`/program/${program.id}`)}
-        >
-          <CarouselImage
-            src={program.image}
-            alt={program.title}
-            center={index === 2 ? "true" : "false"}
-          />
-        </CarouselItemContainer>
-      ))}
+      {visibleItems?.map(
+        (program, index) =>
+          program?.id && (
+            <CarouselItemContainer
+              key={program.id}
+              center={index === 2 ? "true" : "false"}
+              onClick={() => navigate(`/program/${program.id}`)}
+            >
+              <CarouselImage
+                src={program.image}
+                alt={program.title}
+                center={index === 2 ? "true" : "false"}
+              />
+            </CarouselItemContainer>
+          )
+      )}
     </CarouselContainer>
   );
 };

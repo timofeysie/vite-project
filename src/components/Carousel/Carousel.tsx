@@ -81,7 +81,6 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
   useEffect(() => {
     if (programs) {
       const visibleList = createVisibleList(selectedIndex);
-      console.log("visibleItems", visibleList);
       setVisibleItems(visibleList);
     }
   }, [programs]);
@@ -103,8 +102,6 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
       }
     };
 
-    console.log("arrowButtonPressed", arrowButtonPressed);
-
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -115,7 +112,6 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
 
   useEffect(() => {
     const visibleList = createVisibleList(selectedIndex);
-    console.log("visibleItems", visibleList);
     setVisibleItems(visibleList);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex]);

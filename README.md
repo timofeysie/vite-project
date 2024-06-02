@@ -12,18 +12,18 @@ run npm run test
 ## Table of Contents
 
 - [Table of Contents](#table-of-contents)
-  * [The Challenge](#the-challenge)
+  * [The challenge](#the-challenge)
   * [Planning](#planning)
   * [Getting started with Vite](#getting-started-with-vite)
   * [Interface vs. Type](#interface-vs.-type)
   * [Setting up Jest](#setting-up-jest)
-  * [Unit testing a React TypeScript App With Vitest](#unit-testing-a-react-typeScript-app-with-vitest)
+  * [Unit testing a React TypeScript App with Vitest](#unit-testing-a-react-typeScript-app-with-vitest)
   * [Redux Toolkit](#redux-roolkit)
   * [Routing](#routing)
-  * [The Requirements](#the-requirements)
+  * [The requirements](#the-requirements)
   * [The theme](#the-theme)
   * [The isCenter warning](#the-iscenter-warning)
-  * [The Specification](#the-specification)
+  * [The specification](#the-specification)
   * [The carousel](#the-carousel)
   * [Unit tests](#unit-tests)
   * [React + TypeScript + Vite (old README)](#react+typeScript+vite-(old-README))
@@ -50,7 +50,7 @@ I would add transitions to the carousel, as well as an automatic mode and expose
 
 ### What would you do differently if you were allocated more time?
 
-If I had more time I would finish all the requirements of the test.  I still need to ensure responsive support for 720p and 1080p screen sizes.  Actually, my initial layout was responsive but I broke that along the way when implementing the them.
+If I had more time I would finish all the requirements of the test.  I still need to ensure responsive support for 720p and 1080p screen sizes.  Actually, my initial layout was responsive but I broke that along the way when implementing the solution.
 
 The Redux store implements a loading state, this needs to be implemented in the UI with a skeleton loading screen.
 
@@ -60,7 +60,7 @@ However, I have other work to do at the moment so can't keep going on this.  I w
 
 ### We are also interested in looking at any other code or projects that you're proud
 
-On project I am particularly proud of is the [React Redux TypeScript Example](https://github.com/timofeysie/redux-typescript-example) project.
+A project I am particularly proud of is the [React Redux TypeScript Example](https://github.com/timofeysie/redux-typescript-example) project.
 
 A few years ago I found not much help when using the Redux Toolkit with Typescript, so I took it upon myself to convert the large example app from their official learning trail to Typescript.  I wrote a few blogs about this, and got some great feedback on it.  Including from the Redux lead developer Mark Erikson took notice and used it as a reference when creating the current docs which now focus on Typescript.
 
@@ -589,11 +589,21 @@ The challenge calls for two pages.
 6. When an error occurs an error message message should be rendered. (error.jpg)
 7. This functionality should be unit tested.
 
-TODO
+### TODO
+
+#### Features
 
 - ensure responsive support for 720p and 1080p screen sizes.
 - skeleton loading screen
 - change axios back to fetch
+- mobile view should have fewer slides?  3 by default?
+- transitions for sliding
+
+#### Bugs
+
+- ensure responsive support for 720p and 1080p screen sizes.
+- detail view needs to stack for mobile view.
+- the enter key leads to the wrong detail page (but mouse click works)
 
 ## The carousel
 
@@ -618,6 +628,92 @@ Now that I have a few tests passing, I can confirm that issue #3 noted above is 
 I was able to test the right arrow behavior, but ran out of time when trying to refactor the code so the left arrow key works as expected.
 
 When the left arrow key I need to add the last item in the programs list to the beginning on the visible items, but to handle this correctly there needs to be some refactoring.
+
+## Testing the routing
+
+Since the testing of the initial state is all working now, using the keyboard controls to affect the UI is next to test.
+
+A LocationDisplay object is created that contains a div with a test id and the path as its contents.
+
+Then the MemoryRouter object is used to re-create the routing that can be used to test the app.
+
+```js
+import {
+  BrowserRouter,
+  useLocation,
+  MemoryRouter,
+  Route,
+  Routes,
+} from "react-router-dom";
+...
+const LocationDisplay = () => {
+  const location = useLocation();
+  return <div data-testid="location-display">{location.pathname}</div>;
+};
+...
+  it("navigates to detail page on enter key press", () => {
+    const { container, getAllByAltText } = render(
+      <MemoryRouter initialEntries={["/"]}>
+        <Routes>
+          <Route path="/" element={<Carousel programs={programs} />} />
+          <Route path="/details/:id" element={<div>Detail Page</div>} />
+          <Route path="*" element={<LocationDisplay />} />
+        </Routes>
+      </MemoryRouter>
+    );
+
+    const carouselContainer = container.querySelector(
+      '[data-testid="carousel-container"]'
+    );
+
+    const carouselImages = getAllByAltText("Dr. Death");
+    const defaultId = carouselImages[0].getAttribute("id");
+
+    if (carouselContainer) {
+      fireEvent.keyDown(carouselContainer, { key: "Enter" });
+
+      const locationDisplay = container.querySelector(
+        '[data-testid="location-display"]'
+      );
+      expect(locationDisplay?.textContent).toBe(`/program/67517${defaultId}`);
+    }
+  });
+```
+
+There are a few issues with this at the moment.
+
+First the id of the currently selected default item is captured as this should be the same id when ENTER is pressed and the app navigates to program detail page.
+
+However, I see carouselImages[0].getAttribute("id") is returning null.
+
+Next, the expected result should be the first movie id which is 67298.  However, the value that comes out is 67517.
+
+```js
+{
+  "id": 67298,
+  "title": "Dr. Death",
+},
+{
+  "id": 65737,
+  "title": "This Way Up",
+},
+{
+  "id": 67517,
+  "title": "Power Book III: Raising Kanan",
+}
+```
+
+The tests fails with the following output:
+
+```err
+- Expected
++ Received
+
+- /program/null
++ /program/67517
+```
+
+This is actually what happens if you load the app and press the enter key.  So fixing that in the Carousel.tsx is next.
 
 ## React + TypeScript + Vite (old README)
 

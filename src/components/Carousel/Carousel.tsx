@@ -46,8 +46,8 @@ export interface CarouselProps {
 const Carousel: React.FC<CarouselProps> = ({ programs }) => {
   const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [arrowButtonPressed, setArrowButtonPressed] = useState("");
   const [visibleItems, setVisibleItems] = useState<Program[]>([]);
+  console.log('programs', programs.length)
 
   /**
    * Take the current index and create a visible array of program objects to display
@@ -89,15 +89,12 @@ const Carousel: React.FC<CarouselProps> = ({ programs }) => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === "ArrowRight") {
         setSelectedIndex((prevIndex) => (prevIndex + 1) % programs.length);
-        setArrowButtonPressed("ArrowRight");
       } else if (event.key === "ArrowLeft") {
         setSelectedIndex((prevIndex) => {
           const newIndex = (prevIndex - 1 + programs.length) % programs.length;
-          setArrowButtonPressed("ArrowLeft");
           return newIndex;
         });
       } else if (event.key === "Enter") {
-        setArrowButtonPressed("");
         navigate(`/program/${programs[selectedIndex + 2].id}`);
       }
     };
